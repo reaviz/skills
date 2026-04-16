@@ -11,6 +11,17 @@ skills/
 ├── README.md
 └── reablocks/
     ├── SKILL.md                        # Library overview, theming, common rules
+    ├── data/
+    │   ├── SKILL.md                    # Data category overview
+    │   ├── data-size/SKILL.md          # DataSize + formatSize
+    │   ├── date-format/SKILL.md        # DateFormat (absolute, relative, toggle)
+    │   ├── duration/SKILL.md           # Duration + formatDuration
+    │   ├── ellipsis/SKILL.md           # Ellipsis (character/line truncation)
+    │   ├── infinity-list/SKILL.md      # InfinityList + useInfinityList hook
+    │   ├── pager/SKILL.md              # Pager (pagination controls)
+    │   ├── pluralize/SKILL.md          # Pluralize + pluralize utility
+    │   ├── redact/SKILL.md             # Redact (mask sensitive content)
+    │   └── sort/SKILL.md              # Sort (column header with direction)
     ├── elements/
     │   ├── SKILL.md                    # Elements category overview
     │   ├── avatar/SKILL.md             # Avatar + AvatarGroup
@@ -58,19 +69,8 @@ skills/
     │   ├── notification/SKILL.md       # Notifications + useNotification
     │   ├── popover/SKILL.md            # Popover (click-triggered)
     │   └── tooltip/SKILL.md            # Tooltip (hover, delays, follow-cursor)
-    ├── typography/
-    │   └── SKILL.md                    # Typography: H1-H6, P, BlockQuote, Lead, Large, Small, Muted
-    └── data/
-        ├── SKILL.md                    # Data category overview
-        ├── data-size/SKILL.md          # DataSize + formatSize
-        ├── date-format/SKILL.md        # DateFormat (absolute, relative, toggle)
-        ├── duration/SKILL.md           # Duration + formatDuration
-        ├── ellipsis/SKILL.md           # Ellipsis (character/line truncation)
-        ├── infinity-list/SKILL.md      # InfinityList + useInfinityList hook
-        ├── pager/SKILL.md              # Pager (pagination controls)
-        ├── pluralize/SKILL.md          # Pluralize + pluralize utility
-        ├── redact/SKILL.md             # Redact (mask sensitive content)
-        └── sort/SKILL.md              # Sort (column header with direction)
+    └── typography/
+        └── SKILL.md                    # Typography (headings, text styles)
 ```
 
 ## Libraries
@@ -81,16 +81,63 @@ React UI component library with 50+ components built on Tailwind CSS and Framer 
 
 | Category | Components |
 |----------|------------|
+| **Data** | DataSize, DateFormat, Duration, Ellipsis, InfinityList, Pager, Pluralize, Redact, Sort |
 | **Elements** | Avatar, AvatarGroup, Badge, Button, Chip, CommandPalette, IconButton, Kbd, Loader, Navigation, Skeleton |
 | **Form** | Calendar, Checkbox, DateInput, Input, Radio, Range, Select, Textarea, Toggle |
 | **Layout** | Breadcrumbs, Card, Collapse, Divider, Field, List, Motion, Stepper, Tabs, Tree |
 | **Layers** | Backdrop, Callout, ConfirmDialog, ContextMenu, Dialog, Drawer, Menu, Notification, Popover, Tooltip |
 | **Typography** | H1-H6, P, BlockQuote, Lead, Large, Small, Muted |
-| **Data** | DataSize, DateFormat, Duration, Ellipsis, InfinityList, Pager, Pluralize, Redact, Sort |
 
-## Usage
+## Integration with Claude Code (Reablocks example)
 
-These skills are automatically loaded by Claude Code when working in projects that reference the corresponding library. They provide contextual guidance on component APIs, props, theming, and best practices.
+Claude Code discovers skills automatically from specific filesystem locations. Choose one of the methods below to make these skills available in your project.
+
+### Option 1: Project-level (recommended for teams)
+
+Copy or symlink the desired library directory into your project's `.claude/skills/` folder:
+
+```bash
+# From your project root
+mkdir -p .claude/skills
+
+# Symlink the entire reablocks skill tree
+ln -s /path/to/reaviz/skills/reablocks .claude/skills/reablocks
+```
+
+Skills placed in `.claude/skills/` are committed to version control and shared with all team members.
+
+### Option 2: User-level (personal, all projects)
+
+Copy or symlink skills into `~/.claude/skills/` to make them available across all your projects:
+
+```bash
+mkdir -p ~/.claude/skills
+
+# Symlink the library
+ln -s /path/to/reaviz/skills/reablocks ~/.claude/skills/reablocks
+```
+
+User-level skills are not shared with other team members.
+
+### Option 3: `--add-dir` flag (per-session)
+
+Point Claude Code to this repository at launch. Skills inside `.claude/skills/` of added directories are discovered automatically:
+
+```bash
+claude --add-dir /path/to/reaviz/skills
+```
+
+This grants file access for the current session only.
+
+### Verifying installation
+
+Once installed, Claude Code will automatically load the relevant `SKILL.md` files when it encounters Reaviz components in your code. You can verify by asking Claude Code about a specific component:
+
+```
+> How do I use the reablocks Select component?
+```
+
+Claude Code should respond with API details, props, and examples sourced from the skill files.
 
 ## Adding Skills
 
