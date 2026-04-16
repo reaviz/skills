@@ -31,6 +31,39 @@ skills/
 │       ├── SKILL.md                    # Styling category overview
 │       ├── themes/SKILL.md            # lightTheme, darkTheme, Theme interface
 │       └── sizing/SKILL.md            # SizingType: pagerank, centrality, attribute
+├── reaviz/
+│   ├── SKILL.md                        # Library overview, data shapes, common patterns
+│   ├── common/
+│   │   ├── SKILL.md                    # Common category overview
+│   │   ├── axis/SKILL.md              # LinearXAxis, LinearYAxis, ticks, labels
+│   │   ├── brush-zoom/SKILL.md        # ChartBrush, ChartZoomPan
+│   │   ├── color-schemes/SKILL.md     # Named palettes, ColorSchemeType
+│   │   ├── gradient-mask/SKILL.md     # Gradient, GradientStop, Mask, Stripes
+│   │   ├── gridline/SKILL.md          # GridlineSeries, Gridline, GridStripe
+│   │   ├── legend/SKILL.md            # DiscreteLegend, SequentialLegend
+│   │   ├── markers/SKILL.md           # LinearValueMarker, RadialValueMarker, MarkLine
+│   │   └── tooltip/SKILL.md           # ChartTooltip, TooltipArea, TooltipTemplate
+│   └── charts/
+│       ├── SKILL.md                    # Charts category overview
+│       ├── area-chart/SKILL.md         # AreaChart (standard, grouped, stacked, normalized)
+│       ├── bar-chart/SKILL.md          # BarChart (+ stacked, marimekko, histogram, waterfall)
+│       ├── bar-list/SKILL.md           # BarList (horizontal ranking bars)
+│       ├── bubble-chart/SKILL.md       # BubbleChart (packed circles)
+│       ├── funnel-chart/SKILL.md      # FunnelChart (default, layered)
+│       ├── gauge/SKILL.md             # LinearGauge, RadialGauge
+│       ├── heatmap/SKILL.md           # Heatmap + CalendarHeatmap
+│       ├── map/SKILL.md               # Map + MapMarker
+│       ├── meter/SKILL.md             # Meter (segmented column strip)
+│       ├── pie-chart/SKILL.md         # PieChart (pie, donut, exploded)
+│       ├── radar-chart/SKILL.md       # RadarChart (spider, radial axes)
+│       ├── sankey/SKILL.md            # Sankey (flow diagram, nodes + links)
+│       ├── scatter-plot/SKILL.md      # ScatterPlot (points, bubbles, symbols)
+│       ├── sparkline/SKILL.md         # Sparkline, AreaSparkline, BarSparkline, Sonar
+│       ├── sunburst-chart/SKILL.md   # SunburstChart (hierarchical radial)
+│       ├── tree-map/SKILL.md         # TreeMap (rectangular hierarchical)
+│       ├── venn-diagram/SKILL.md    # VennDiagram (venn, euler, starEuler)
+│       └── word-cloud/SKILL.md     # WordCloud (tag cloud)
+│       └── line-chart/SKILL.md        # LineChart (line-only, no area fill)
 └── reablocks/
     ├── SKILL.md                        # Library overview, theming, common rules
     ├── data/
@@ -107,6 +140,15 @@ WebGL node-based graph visualization for React built on Three.js and D3.
 | **Layout** | forceDirected2d/3d, circular, concentric, tree, radial, hierarchical, nooverlap, forceatlas2, custom |
 | **Interaction** | useSelection, Lasso, CameraControls, useCenterGraph, RadialMenu, useCollapse |
 | **Styling** | lightTheme, darkTheme, SizingType (pagerank, centrality, attribute) |
+
+### Reaviz (`reaviz/`)
+
+React data visualization library built on D3.js and Framer Motion.
+
+| Category | Components |
+|----------|------------|
+| **Common** | Axis, Gridline, Tooltip, Legend, Gradient, Mask, Brush, ZoomPan, ColorSchemes, ValueMarker, MarkLine |
+| **Charts** | AreaChart, BarChart, BarList, BubbleChart, FunnelChart, LinearGauge, RadialGauge, Meter, Heatmap, CalendarHeatmap, LineChart, Map, PieChart, RadarChart, Sankey, ScatterPlot, SparklineChart, AreaSparklineChart, BarSparklineChart, SonarChart, SunburstChart, TreeMap, VennDiagram, WordCloud |
 
 ### Reablocks (`reablocks/`)
 
