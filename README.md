@@ -9,6 +9,28 @@ Each library lives in its own directory under the repo root. To add a new librar
 ```
 skills/
 ├── README.md
+├── reagraph/
+│   ├── SKILL.md                        # Library overview, data shapes, setup
+│   ├── graph/
+│   │   ├── SKILL.md                    # Graph category overview
+│   │   ├── graph-canvas/SKILL.md       # GraphCanvas (main entry, all props, ref methods)
+│   │   ├── nodes/SKILL.md             # Sphere, SphereWithIcon, SphereWithSvg, Svg, Badge
+│   │   ├── edges/SKILL.md             # Edge config, arrows, dashed, curved, aggregation
+│   │   ├── labels/SKILL.md            # Label visibility, fonts, styling
+│   │   └── clusters/SKILL.md          # Cluster grouping, custom rendering
+│   ├── layout/
+│   │   ├── SKILL.md                    # Layout category overview
+│   │   └── layouts/SKILL.md           # 16 layout algorithms + custom + overrides
+│   ├── interaction/
+│   │   ├── SKILL.md                    # Interaction category overview
+│   │   ├── selection/SKILL.md         # useSelection, lasso, single/multi/path
+│   │   ├── camera/SKILL.md            # CameraControls, modes, centering, zoom
+│   │   ├── context-menu/SKILL.md      # RadialMenu, RadialSlice
+│   │   └── collapse/SKILL.md          # useCollapse, expand/collapse hierarchies
+│   └── styling/
+│       ├── SKILL.md                    # Styling category overview
+│       ├── themes/SKILL.md            # lightTheme, darkTheme, Theme interface
+│       └── sizing/SKILL.md            # SizingType: pagerank, centrality, attribute
 ├── reaviz/
 │   ├── SKILL.md                        # Library overview, data shapes, common patterns
 │   ├── common/
@@ -107,6 +129,17 @@ skills/
 ```
 
 ## Libraries
+
+### Reagraph (`reagraph/`)
+
+WebGL node-based graph visualization for React built on Three.js and D3.
+
+| Category | Components |
+|----------|------------|
+| **Graph** | GraphCanvas, Sphere, SphereWithIcon, SphereWithSvg, Svg, Badge, Edge, Arrow, Label, Cluster |
+| **Layout** | forceDirected2d/3d, circular, concentric, tree, radial, hierarchical, nooverlap, forceatlas2, custom |
+| **Interaction** | useSelection, Lasso, CameraControls, useCenterGraph, RadialMenu, useCollapse |
+| **Styling** | lightTheme, darkTheme, SizingType (pagerank, centrality, attribute) |
 
 ### Reaviz (`reaviz/`)
 
