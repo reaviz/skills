@@ -1,3 +1,8 @@
+---
+name: reagraph
+description: Use when building interactive 2D or 3D graph or network visualizations in React with the reagraph library (GraphCanvas, node-link diagrams, force-directed layouts). Covers data shapes (GraphNode, GraphEdge), 16 layout algorithms, selection, lasso, camera controls, sizing strategies, and theming.
+---
+
 # Reagraph
 
 Reagraph is a WebGL-powered graph visualization library for React built on **Three.js**, **React Three Fiber**, **D3**, and **Graphology**. It renders interactive node-link diagrams in 2D and 3D with force-directed and hierarchical layouts.

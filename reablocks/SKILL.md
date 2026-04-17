@@ -1,3 +1,8 @@
+---
+name: reablocks
+description: Use when building UI in React with the reablocks component library (Button, Dialog, Drawer, Select, Calendar, CommandPalette, Tabs, Tree, Tooltip, etc.). Covers ThemeProvider setup, extendTheme, custom variants, mergeThemeClasses, useComponentTheme/useTheme hooks, and the 50+ component index.
+---
+
 # Reablocks
 
 Reablocks is a React UI component library with 50+ components built on **Tailwind CSS** and **Framer Motion**. It provides a comprehensive theming system, accessible components, and consistent design patterns.

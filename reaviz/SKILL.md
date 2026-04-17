@@ -1,3 +1,8 @@
+---
+name: reaviz
+description: Use when building charts or data visualizations in React with the reaviz library (AreaChart, BarChart, LineChart, PieChart, ScatterPlot, Heatmap, Sankey, RadarChart, etc.). Covers composable chart architecture, data shapes, axes, gridlines, tooltips, color schemes, and animation.
+---
+
 # Reaviz
 
 Reaviz is a React data visualization library built on **D3.js** and **Framer Motion**. It provides composable, animated chart components with a declarative JSX API.
