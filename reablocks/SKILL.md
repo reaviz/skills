@@ -22,7 +22,7 @@ import { ThemeProvider, theme } from 'reablocks';
 
 function App() {
   return (
-    <ThemeProvider overrides={theme}>
+    <ThemeProvider theme={theme}>
       <YourApp />
     </ThemeProvider>
   );
@@ -33,23 +33,22 @@ function App() {
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
-| `overrides` | `ReablocksTheme` | Yes | Theme overrides to apply |
-| `theme` | `ReablocksTheme` | No | Base theme (defaults to `themeDefault`) |
+| `theme` | `ReablocksTheme` | Yes | The theme to apply |
 
 ### Built-in Themes
 
-- **`theme`** (default) — standard theme using Tailwind utility classes
-- **`unifyTheme`** — design system theme using CSS custom properties (requires `import 'reablocks/unify.css'`)
+- **`theme`** — standard theme using Tailwind utility classes
+- **`themeUnify`** — design system theme using CSS custom properties (requires `import 'reablocks/unify.css'`)
 
 ```tsx
 // Default theme
 import { ThemeProvider, theme } from 'reablocks';
-<ThemeProvider overrides={theme}>...</ThemeProvider>
+<ThemeProvider theme={theme}>...</ThemeProvider>
 
 // Unify theme
-import { ThemeProvider, unifyTheme } from 'reablocks';
+import { ThemeProvider, themeUnify } from 'reablocks';
 import 'reablocks/unify.css';
-<ThemeProvider overrides={unifyTheme}>...</ThemeProvider>
+<ThemeProvider theme={themeUnify}>...</ThemeProvider>
 ```
 
 ## Theme Customization
@@ -73,7 +72,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme)}>
+<ThemeProvider theme={extendTheme(theme, customTheme)}>
   <App />
 </ThemeProvider>
 ```
@@ -105,7 +104,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme)}>
+<ThemeProvider theme={extendTheme(theme, customTheme)}>
   {/* Use the new variant just like built-in ones */}
   <Button variant="gradient" color="primary">Gradient Primary</Button>
   <Button variant="gradient" color="secondary">Gradient Secondary</Button>

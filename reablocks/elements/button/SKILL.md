@@ -131,7 +131,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme)}>
+<ThemeProvider theme={extendTheme(theme, customTheme)}>
   <Button color="gradient">Gradient</Button>
 </ThemeProvider>
 ```
@@ -159,7 +159,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme)}>
+<ThemeProvider theme={extendTheme(theme, customTheme)}>
   <Button variant="gradient" color="primary">Gradient Primary</Button>
   <Button variant="gradient" color="secondary">Gradient Secondary</Button>
 </ThemeProvider>
@@ -181,7 +181,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme)}>
+<ThemeProvider theme={extendTheme(theme, customTheme)}>
   <Button size="xsmall">Extra Small</Button>
   <Button size="xlarge">Extra Large</Button>
 </ThemeProvider>
@@ -202,7 +202,7 @@ const customTheme: PartialReablocksTheme = {
   }
 };
 
-<ThemeProvider overrides={extendTheme(theme, customTheme, mergeThemeClasses)}>
+<ThemeProvider theme={extendTheme(theme, customTheme, mergeThemeClasses)}>
   ...
 </ThemeProvider>
 ```
