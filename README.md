@@ -52,6 +52,7 @@ skills/
 │       ├── funnel-chart/SKILL.md      # FunnelChart (default, layered)
 │       ├── gauge/SKILL.md             # LinearGauge, RadialGauge
 │       ├── heatmap/SKILL.md           # Heatmap + CalendarHeatmap
+│       ├── line-chart/SKILL.md        # LineChart (line-only, no area fill)
 │       ├── map/SKILL.md               # Map + MapMarker
 │       ├── meter/SKILL.md             # Meter (segmented column strip)
 │       ├── pie-chart/SKILL.md         # PieChart (pie, donut, exploded)
@@ -59,73 +60,84 @@ skills/
 │       ├── sankey/SKILL.md            # Sankey (flow diagram, nodes + links)
 │       ├── scatter-plot/SKILL.md      # ScatterPlot (points, bubbles, symbols)
 │       ├── sparkline/SKILL.md         # Sparkline, AreaSparkline, BarSparkline, Sonar
-│       ├── sunburst-chart/SKILL.md   # SunburstChart (hierarchical radial)
-│       ├── tree-map/SKILL.md         # TreeMap (rectangular hierarchical)
-│       ├── venn-diagram/SKILL.md    # VennDiagram (venn, euler, starEuler)
-│       └── word-cloud/SKILL.md     # WordCloud (tag cloud)
-│       └── line-chart/SKILL.md        # LineChart (line-only, no area fill)
-└── reablocks/
-    ├── SKILL.md                        # Library overview, theming, common rules
-    ├── data/
-    │   ├── SKILL.md                    # Data category overview
-    │   ├── data-size/SKILL.md          # DataSize + formatSize
-    │   ├── date-format/SKILL.md        # DateFormat (absolute, relative, toggle)
-    │   ├── duration/SKILL.md           # Duration + formatDuration
-    │   ├── ellipsis/SKILL.md           # Ellipsis (character/line truncation)
-    │   ├── infinity-list/SKILL.md      # InfinityList + useInfinityList hook
-    │   ├── pager/SKILL.md              # Pager (pagination controls)
-    │   ├── pluralize/SKILL.md          # Pluralize + pluralize utility
-    │   ├── redact/SKILL.md             # Redact (mask sensitive content)
-    │   └── sort/SKILL.md              # Sort (column header with direction)
-    ├── elements/
-    │   ├── SKILL.md                    # Elements category overview
-    │   ├── avatar/SKILL.md             # Avatar + AvatarGroup
-    │   ├── badge/SKILL.md              # Badge
-    │   ├── button/SKILL.md             # Button + ButtonGroup
-    │   ├── chip/SKILL.md               # Chip (badge/tag types)
-    │   ├── command-palette/SKILL.md    # CommandPalette + Section + Item
-    │   ├── icon-button/SKILL.md        # IconButton
-    │   ├── kbd/SKILL.md                # Kbd (keyboard shortcuts)
-    │   ├── loader/SKILL.md             # DotsLoader
-    │   ├── navigation/SKILL.md         # NavigationBar + NavigationButton
-    │   └── skeleton/SKILL.md           # Skeleton
-    ├── form/
-    │   ├── SKILL.md                    # Form category overview
-    │   ├── calendar/SKILL.md           # Calendar (dates, ranges, time, presets)
-    │   ├── checkbox/SKILL.md           # Checkbox (animated SVG, intermediate)
-    │   ├── date-input/SKILL.md         # DateInput (input + calendar popup)
-    │   ├── input/SKILL.md              # Input + DebouncedInput + InlineInput
-    │   ├── radio/SKILL.md              # Radio + RadioGroup
-    │   ├── range/SKILL.md              # RangeSingle + RangeDouble
-    │   ├── select/SKILL.md             # Select (single, multi, creatable)
-    │   ├── textarea/SKILL.md           # Textarea (auto-resize)
-    │   └── toggle/SKILL.md             # Toggle (on/off switch)
-    ├── layout/
-    │   ├── SKILL.md                    # Layout category overview
-    │   ├── breadcrumbs/SKILL.md        # Breadcrumbs (composable sub-components)
-    │   ├── card/SKILL.md               # Card (container with header)
-    │   ├── collapse/SKILL.md           # Collapse (animated expand/collapse)
-    │   ├── divider/SKILL.md            # Divider (horizontal/vertical)
-    │   ├── field/SKILL.md              # Field (label, hint, error wrapper)
-    │   ├── list/SKILL.md               # List + ListItem + ListHeader
-    │   ├── motion/SKILL.md             # MotionGroup + MotionItem
-    │   ├── stepper/SKILL.md            # Stepper + Step (dots/numbered)
-    │   ├── tabs/SKILL.md               # Tabs + TabList + Tab + TabPanel
-    │   └── tree/SKILL.md               # Tree + TreeNode
-    ├── layers/
-    │   ├── SKILL.md                    # Layers category overview
-    │   ├── backdrop/SKILL.md           # Backdrop
-    │   ├── callout/SKILL.md            # Callout (+ Success/Error/Warning/Info variants)
-    │   ├── confirm-dialog/SKILL.md     # ConfirmDialog + useConfirmDialog
-    │   ├── context-menu/SKILL.md       # ContextMenu (right-click)
-    │   ├── dialog/SKILL.md             # Dialog + slots + useDialog
-    │   ├── drawer/SKILL.md             # Drawer + slots + useDrawer
-    │   ├── menu/SKILL.md               # Menu (dropdown)
-    │   ├── notification/SKILL.md       # Notifications + useNotification
-    │   ├── popover/SKILL.md            # Popover (click-triggered)
-    │   └── tooltip/SKILL.md            # Tooltip (hover, delays, follow-cursor)
-    └── typography/
-        └── SKILL.md                    # Typography (headings, text styles)
+│       ├── sunburst-chart/SKILL.md    # SunburstChart (hierarchical radial)
+│       ├── tree-map/SKILL.md          # TreeMap (rectangular hierarchical)
+│       ├── venn-diagram/SKILL.md      # VennDiagram (venn, euler, starEuler)
+│       └── word-cloud/SKILL.md        # WordCloud (tag cloud)
+├── reablocks/
+│   ├── SKILL.md                        # Library overview, theming, common rules
+│   ├── data/
+│   │   ├── SKILL.md                    # Data category overview
+│   │   ├── data-size/SKILL.md          # DataSize + formatSize
+│   │   ├── date-format/SKILL.md        # DateFormat (absolute, relative, toggle)
+│   │   ├── duration/SKILL.md           # Duration + formatDuration
+│   │   ├── ellipsis/SKILL.md           # Ellipsis (character/line truncation)
+│   │   ├── infinity-list/SKILL.md      # InfinityList + useInfinityList hook
+│   │   ├── pager/SKILL.md              # Pager (pagination controls)
+│   │   ├── pluralize/SKILL.md          # Pluralize + pluralize utility
+│   │   ├── redact/SKILL.md             # Redact (mask sensitive content)
+│   │   └── sort/SKILL.md               # Sort (column header with direction)
+│   ├── elements/
+│   │   ├── SKILL.md                    # Elements category overview
+│   │   ├── avatar/SKILL.md             # Avatar + AvatarGroup
+│   │   ├── badge/SKILL.md              # Badge
+│   │   ├── button/SKILL.md             # Button + ButtonGroup
+│   │   ├── chip/SKILL.md               # Chip (badge/tag types)
+│   │   ├── command-palette/SKILL.md    # CommandPalette + Section + Item
+│   │   ├── icon-button/SKILL.md        # IconButton
+│   │   ├── kbd/SKILL.md                # Kbd (keyboard shortcuts)
+│   │   ├── loader/SKILL.md             # DotsLoader
+│   │   ├── navigation/SKILL.md         # NavigationBar + NavigationButton
+│   │   └── skeleton/SKILL.md           # Skeleton
+│   ├── form/
+│   │   ├── SKILL.md                    # Form category overview
+│   │   ├── calendar/SKILL.md           # Calendar (dates, ranges, time, presets)
+│   │   ├── checkbox/SKILL.md           # Checkbox (animated SVG, intermediate)
+│   │   ├── date-input/SKILL.md         # DateInput (input + calendar popup)
+│   │   ├── input/SKILL.md              # Input + DebouncedInput + InlineInput
+│   │   ├── radio/SKILL.md              # Radio + RadioGroup
+│   │   ├── range/SKILL.md              # RangeSingle + RangeDouble
+│   │   ├── select/SKILL.md             # Select (single, multi, creatable)
+│   │   ├── textarea/SKILL.md           # Textarea (auto-resize)
+│   │   └── toggle/SKILL.md             # Toggle (on/off switch)
+│   ├── layout/
+│   │   ├── SKILL.md                    # Layout category overview
+│   │   ├── breadcrumbs/SKILL.md        # Breadcrumbs (composable sub-components)
+│   │   ├── card/SKILL.md               # Card (container with header)
+│   │   ├── collapse/SKILL.md           # Collapse (animated expand/collapse)
+│   │   ├── divider/SKILL.md            # Divider (horizontal/vertical)
+│   │   ├── field/SKILL.md              # Field (label, hint, error wrapper)
+│   │   ├── list/SKILL.md               # List + ListItem + ListHeader
+│   │   ├── motion/SKILL.md             # MotionGroup + MotionItem
+│   │   ├── stepper/SKILL.md            # Stepper + Step (dots/numbered)
+│   │   ├── tabs/SKILL.md               # Tabs + TabList + Tab + TabPanel
+│   │   └── tree/SKILL.md               # Tree + TreeNode
+│   ├── layers/
+│   │   ├── SKILL.md                    # Layers category overview
+│   │   ├── backdrop/SKILL.md           # Backdrop
+│   │   ├── callout/SKILL.md            # Callout (+ Success/Error/Warning/Info variants)
+│   │   ├── confirm-dialog/SKILL.md     # ConfirmDialog + useConfirmDialog
+│   │   ├── context-menu/SKILL.md       # ContextMenu (right-click)
+│   │   ├── dialog/SKILL.md             # Dialog + slots + useDialog
+│   │   ├── drawer/SKILL.md             # Drawer + slots + useDrawer
+│   │   ├── menu/SKILL.md               # Menu (dropdown)
+│   │   ├── notification/SKILL.md       # Notifications + useNotification
+│   │   ├── popover/SKILL.md            # Popover (click-triggered)
+│   │   └── tooltip/SKILL.md            # Tooltip (hover, delays, follow-cursor)
+│   └── typography/
+│       └── SKILL.md                    # Typography (headings, text styles)
+└── reachat/
+    ├── SKILL.md                        # Library overview, ChatContext, theme system
+    ├── messaging/SKILL.md              # SessionMessagePanel, SessionMessages, SessionMessage, MessageQuestion/Response/Files/Sources/Actions
+    ├── sessions/SKILL.md               # SessionsList, SessionGroups, SessionListItem, NewSessionButton
+    ├── input/SKILL.md                  # ChatInput, RichTextInput (Tiptap), MentionList, SuggestionConfig
+    ├── markdown/SKILL.md               # Markdown, CodeHighlighter, ChartRenderer, remark plugins (cve, redact, component)
+    ├── chat-bubble/SKILL.md            # ChatBubble (floating launcher)
+    ├── app-bar/SKILL.md                # AppBar (header)
+    ├── suggestions/SKILL.md            # ChatSuggestions, ChatSuggestion
+    ├── status/SKILL.md                 # MessageStatus, MessageStatusItem, StatusIcon
+    ├── catalog/SKILL.md                # componentCatalog, ComponentRenderer, createChartComponentDef
+    └── ag-ui/SKILL.md                  # useAgUi (AG-UI protocol streaming hook)
 ```
 
 ## Libraries
@@ -162,6 +174,23 @@ React UI component library with 50+ components built on Tailwind CSS and Framer 
 | **Layout** | Breadcrumbs, Card, Collapse, Divider, Field, List, Motion, Stepper, Tabs, Tree |
 | **Layers** | Backdrop, Callout, ConfirmDialog, ContextMenu, Dialog, Drawer, Menu, Notification, Popover, Tooltip |
 | **Typography** | H1-H6, P, BlockQuote, Lead, Large, Small, Muted |
+
+### Reachat (`reachat/`)
+
+React UI library for chat / LLM experiences. Built on reablocks, Tiptap, react-markdown, Floating UI, and motion. Provides a slot-based composition for chat UIs, rich-text input with @mentions and /commands, file uploads, multi-file support, markdown rendering with charts and redaction, an LLM-driven `ComponentCatalog`, and an AG-UI protocol hook.
+
+| Category | Components |
+|----------|------------|
+| **Root** | Chat, ChatContext, chatTheme, ChatTheme, PartialChatTheme |
+| **Messaging** | SessionMessagePanel, SessionMessagesHeader, SessionMessages, SessionMessage, MessageQuestion, MessageResponse, MessageSources, MessageActions, MessageFiles, SessionEmpty |
+| **Sessions** | SessionsList, SessionGroups, SessionsGroup, SessionListItem, NewSessionButton |
+| **Input** | ChatInput, RichTextInput, MentionList, FileInput, SuggestionConfig, MentionItem, SlashCommandItem |
+| **Markdown** | Markdown, CodeHighlighter, ChartRenderer, remarkCve, remarkRedact, remarkComponent, ssn/creditCard/bitcoin matchers |
+| **Bubble / AppBar** | ChatBubble, AppBar |
+| **Suggestions** | ChatSuggestions, ChatSuggestion |
+| **Status** | MessageStatus, MessageStatusItem, StatusIcon |
+| **Catalog** | componentCatalog, ComponentRenderer, ComponentError, createComponentPre, createChartComponentDef, validateSpec, generatePrompt |
+| **AG-UI** | useAgUi, AgUi types and event helpers |
 
 ## Integration with Claude Code (Reablocks example)
 
