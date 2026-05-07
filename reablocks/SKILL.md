@@ -135,6 +135,22 @@ const myButtonTheme = extendComponentTheme(defaultButtonTheme, {
 });
 ```
 
+### Theme Types
+
+Reablocks exports several utility types for typing partial themes:
+
+- `PartialReablocksTheme` — `DeepPartial<ReablocksTheme>`, ideal for `extendTheme(theme, ...)` overrides
+- `DeepPartial<T>` — recursive `Partial<T>`, useful for typing custom component theme fragments
+
+```tsx
+import type { DeepPartial, PartialReablocksTheme } from 'reablocks';
+import type { ButtonTheme } from 'reablocks';
+
+const myButton: DeepPartial<ButtonTheme> = {
+  sizes: { xlarge: 'text-xl px-6 py-3' }
+};
+```
+
 ## Theme Hooks
 
 ### useComponentTheme

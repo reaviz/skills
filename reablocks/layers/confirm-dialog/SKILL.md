@@ -17,6 +17,7 @@ import { ConfirmDialog, useConfirmDialog } from 'reablocks';
 | `content` | `string \| ReactNode` | — | Dialog body content |
 | `confirmLabel` | `string` | `'Confirm'` | Confirm button text |
 | `cancelLabel` | `string` | `'Cancel'` | Cancel button text |
+| `variant` | `'default' \| 'destructive'` | `'default'` | Visual variant — `destructive` colors the confirm button as `error` for delete-style actions |
 | `onConfirm` | `() => void` | — | Confirm callback |
 | `onCancel` | `() => void` | — | Cancel callback (also closes the dialog) |
 
@@ -27,8 +28,24 @@ const [open, setOpen] = useState(false);
 
 <ConfirmDialog
   open={open}
+  header="Save Changes"
+  content="Save your changes before continuing?"
+  onConfirm={() => { save(); setOpen(false); }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+## Destructive Variant
+
+Use `variant="destructive"` for dangerous actions (delete, remove, etc.). The confirm button renders with the error color.
+
+```tsx
+<ConfirmDialog
+  open={open}
+  variant="destructive"
   header="Delete Item"
-  content="Are you sure you want to delete this item?"
+  content="This action cannot be undone."
+  confirmLabel="Delete"
   onConfirm={() => { deleteItem(); setOpen(false); }}
   onCancel={() => setOpen(false)}
 />

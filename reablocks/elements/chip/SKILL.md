@@ -5,7 +5,7 @@ Compact element for tags, filters, labels, or selections. Supports colors, varia
 ## Import
 
 ```tsx
-import { Chip } from 'reablocks';
+import { Chip, DeletableChip } from 'reablocks';
 ```
 
 ## Chip Props
@@ -13,17 +13,17 @@ import { Chip } from 'reablocks';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `color` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'error' \| 'info' \| string` | `'default'` | Color variant |
-| `variant` | `'filled' \| 'outline' \| 'subtle' \| string` | `'filled'` | Style variant |
+| `variant` | `'filled' \| 'outline' \| string` | `'filled'` | Style variant |
 | `size` | `'small' \| 'medium' \| 'large' \| string` | `'medium'` | Size variant |
-| `selected` | `boolean` | — | Whether the chip is selected (applies selected styles) |
-| `disabled` | `boolean` | — | Whether the chip is disabled |
+| `selected` | `boolean` | — | Selected state (applies the variant's `selected` styles when clickable) |
+| `disabled` | `boolean` | — | Disabled state |
 | `disableMargins` | `boolean` | — | Remove default margins |
 | `start` | `ReactElement \| string` | — | Content before the label |
 | `end` | `ReactElement \| string` | — | Content after the label |
 | `theme` | `ChipTheme` | — | Per-instance theme override |
 | `className` | `string` | — | Additional CSS classes |
 
-Also accepts all standard `HTMLDivElement` attributes including `onClick`.
+Also accepts all standard `HTMLDivElement` attributes including `onClick`. Children are wrapped in a `<div>` styled by `theme.label`.
 
 ## Basic Usage
 
@@ -36,12 +36,11 @@ Also accepts all standard `HTMLDivElement` attributes including `onClick`.
 ```tsx
 <Chip variant="filled">Filled</Chip>
 <Chip variant="outline">Outline</Chip>
-<Chip variant="subtle">Subtle</Chip>
 ```
 
 ## Colors
 
-All 7 colors work with every variant:
+All seven colors work with every variant:
 
 ```tsx
 <Chip color="default">Default</Chip>
@@ -63,7 +62,7 @@ All 7 colors work with every variant:
 
 ## Adornments
 
-Use `start` and `end` to add icons or text before/after the label:
+Use `start` and `end` to add icons or text before/after the label. Adornment containers are sized via `theme.adornment.sizes[size]`:
 
 ```tsx
 <Chip start={<StarIcon />}>With Icon</Chip>
@@ -73,15 +72,13 @@ Use `start` and `end` to add icons or text before/after the label:
 
 ## Clickable
 
-When `onClick` is provided, the chip becomes a button with `role="button"`, `tabIndex={0}`, and keyboard support:
+When `onClick` is provided, the chip becomes a button: `role="button"`, `tabIndex={0}`, and `Enter`/`Space` keyboard handling. The color's `selectable` styles (hover + selected) apply only when `onClick` is present.
 
 ```tsx
 <Chip variant="outline" onClick={() => handleClick()}>
   Clickable
 </Chip>
 ```
-
-Selectable hover styles (`selectable` in theme) are automatically applied when `onClick` is present.
 
 ## Selected State
 
@@ -96,73 +93,91 @@ Selectable hover styles (`selectable` in theme) are automatically applied when `
 </Chip>
 ```
 
-## Deletable
+## DeletableChip
 
-Use an IconButton in the `end` slot for close/delete:
+`DeletableChip` is a wrapper that injects a delete button into the `end` slot. It accepts all `ChipProps` except `end`.
 
 ```tsx
-import { Chip, IconButton } from 'reablocks';
-import CloseIcon from './close.svg?react';
+import { DeletableChip } from 'reablocks';
 
-<Chip
+<DeletableChip
   variant="filled"
   color="success"
-  end={
-    <IconButton size="small" variant="text" onClick={() => onDelete()}>
-      <CloseIcon />
-    </IconButton>
-  }
+  onDelete={() => removeItem(id)}
 >
   Removable
-</Chip>
+</DeletableChip>
 ```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onDelete` | `() => void` | — | Called when the delete icon is clicked |
+| `deleteIcon` | `ReactElement` | `<CloseIcon />` | Custom delete icon |
+
+The delete button styles come from `theme.deleteButton.base` + `theme.deleteButton[size]`.
 
 ## ChipTheme Interface
 
 ```typescript
-interface ChipTheme {
-  base: string;              // Base styles (inline-flex, rounded, transitions)
-  label?: string;            // Label wrapper styles
-  disabled: string;          // Disabled state (opacity, cursor)
-  adornment: {
-    base: string;            // Adornment container
-    start: string;           // Start adornment spacing
-    end: string;             // End adornment spacing
-    sizes: {                 // Icon sizing per chip size
-      small: string;
-      medium: string;
-      large: string;
-    };
-  };
-  variants: {                // Per-variant base classes
+interface ThemeColor {
+  base?: string;
+  variants?: {
     filled?: string;
     outline?: string;
-    subtle?: string;
     [key: string]: string;
   };
-  colors: {                  // Per-color, per-variant classes
-    [colorName: string]: {
-      base?: string;         // Color base (applied to all variants)
-      variants?: {
-        [variantName: string]: {
-          base: string;      // Base styles for this color+variant
-          selected?: string; // Selected state styles
-          selectable?: string; // Hover styles when clickable
-          start?: string;    // Start adornment color
-          end?: string;      // End adornment color
-        };
-      };
+  selectable?: {
+    base?: string;                  // Applied on hover when clickable (e.g. cursor-pointer)
+    variants?: {
+      filled?:  { base?: string; selected?: string };
+      outline?: { base?: string; selected?: string };
+      [key: string]: { base?: string; selected?: string };
     };
   };
-  sizes: {                   // Per-size classes
+}
+
+interface ChipTheme {
+  base: string;                     // Inline-flex container, transitions, font
+  label: string;                    // Inner wrapper around children (flex items-center)
+  focus: string;                    // focus-visible ring/outline
+  disabled: string;                 // Disabled state (opacity, cursor)
+  adornment: {
+    base: string;                   // Adornment container (flex)
+    start: string;                  // Start adornment spacing
+    end: string;                    // End adornment spacing
+    sizes: {
+      small: string;                // Icon sizing per chip size
+      medium: string;
+      large: string;
+      [key: string]: string;
+    };
+  };
+  variants: {
+    filled: string;
+    outline: string;
+    [key: string]: string;
+  };
+  colors: {
+    default?: ThemeColor;
+    primary?: ThemeColor;
+    secondary?: ThemeColor;
+    success?: ThemeColor;
+    warning?: ThemeColor;
+    error?: ThemeColor;
+    info?: ThemeColor;
+    [key: string]: ThemeColor;
+  };
+  sizes: {
     small: string;
     medium: string;
     large: string;
     [key: string]: string;
   };
-  closeButton: {             // Close button styles (used by IconButton in end slot)
+  deleteButton: {                   // Used by DeletableChip's injected close button
     base: string;
-    sizes: { small, medium, large };
+    sizes: { small: string; medium: string; large: string; [key: string]: string };
   };
 }
 ```
+
+`theme.label` styles the children wrapper — customize it (font weight, color, padding) without touching `theme.base`.

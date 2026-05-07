@@ -12,12 +12,12 @@ import { Button, ButtonGroup } from 'reablocks';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `color` | `'default' \| 'primary' \| 'secondary' \| 'destructive' \| string` | `'default'` | Color variation |
-| `variant` | `'filled' \| 'outline' \| 'text' \| 'ghost' \| string` | `'filled'` | Style variant |
+| `color` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'error' \| string` | `'default'` | Color variation |
+| `variant` | `'filled' \| 'outline' \| 'text' \| string` | `'filled'` | Style variant |
 | `size` | `'small' \| 'medium' \| 'large' \| string` | `'medium'` | Size variation |
 | `fullWidth` | `boolean` | `false` | Take full width of container |
 | `disabled` | `boolean` | `false` | Disable the button |
-| `animated` | `boolean` | `true` | Enable press animation (scale to 0.9) |
+| `disableAnimation` | `boolean` | `false` | Disable the press animation (Framer Motion `whileTap` scale) |
 | `start` | `ReactNode` | — | Element before button content (e.g. icon) |
 | `end` | `ReactNode` | — | Element after button content (e.g. icon) |
 | `disableMargins` | `boolean` | `false` | Remove margins |
@@ -26,7 +26,9 @@ import { Button, ButtonGroup } from 'reablocks';
 | `className` | `string` | — | Additional CSS classes (merged last, highest priority) |
 | `type` | `string` | `'button'` | HTML button type attribute |
 
-Also accepts all standard `HTMLButtonElement` attributes.
+Also accepts all standard `HTMLButtonElement` attributes (except Framer Motion drag handlers, which are stripped).
+
+The rendered `<motion.button>` carries a `data-variant` attribute (set to the active variant — group variant takes precedence) so theme classes can target disabled/variant combinations via `data-variant=...` selectors.
 
 ## Basic Usage
 
@@ -36,36 +38,36 @@ Also accepts all standard `HTMLButtonElement` attributes.
 
 ## Variants
 
-Four built-in style variants:
+Three built-in style variants:
 
 ```tsx
 <Button variant="filled" color="primary">Filled</Button>
 <Button variant="outline" color="primary">Outline</Button>
 <Button variant="text" color="primary">Text</Button>
-<Button variant="ghost" color="primary">Ghost</Button>
 ```
 
 - **filled** — solid background with hover state
 - **outline** — border only, no background fill
 - **text** — text only, no border or background
-- **ghost** — transparent, minimal styling
+
+Custom variants can be registered through theme extension and used as strings.
 
 ## Colors
 
-Four built-in color schemes, each applied per-variant:
+Six built-in colors, each rendered per-variant:
 
 ```tsx
-<Button color="default" variant="filled">Default</Button>
-<Button color="primary" variant="filled">Primary</Button>
-<Button color="secondary" variant="filled">Secondary</Button>
-<Button color="destructive" variant="filled">Destructive</Button>
+<Button color="default">Default</Button>
+<Button color="primary">Primary</Button>
+<Button color="secondary">Secondary</Button>
+<Button color="success">Success</Button>
+<Button color="warning">Warning</Button>
+<Button color="error">Error</Button>
 ```
 
-Colors work with all variants. For example, `color="primary"` + `variant="outline"` renders a primary-colored outlined button.
+Use `color="error"` for destructive actions.
 
 ## Sizes
-
-Three built-in sizes:
 
 ```tsx
 <Button color="primary" size="small">Small</Button>
@@ -75,35 +77,25 @@ Three built-in sizes:
 
 ## With Icons
 
-Use `start` and `end` props to add icons. Icon SVGs are automatically sized based on button size:
+Use `start` and `end` props to add icons. Adornment containers are sized automatically by `theme.adornment.sizes[size]`.
 
 ```tsx
-<Button size="medium" start={<SearchIcon />}>
-  Search
-</Button>
-
-<Button size="medium" end={<ArrowRightIcon />}>
-  Next
-</Button>
-
-<Button size="large" start={<PlusIcon />} end={<ChevronIcon />}>
-  Add Item
-</Button>
+<Button size="medium" start={<SearchIcon />}>Search</Button>
+<Button size="medium" end={<ArrowRightIcon />}>Next</Button>
+<Button size="large" start={<PlusIcon />} end={<ChevronIcon />}>Add Item</Button>
 ```
 
-Adornment icon sizing per size: small = `w-3 h-3`, medium = `w-4 h-4`, large = `w-5 h-5`.
+Icon sizing per size: small = `w-3 h-3`, medium = `w-4 h-4`, large = `w-5 h-5`.
 
 ## Full Width
 
 ```tsx
-<Button color="primary" fullWidth>
-  Full Width Button
-</Button>
+<Button color="primary" fullWidth>Full Width Button</Button>
 ```
 
 ## Disabled
 
-Disabled buttons get reduced opacity and `cursor-not-allowed`. Animation is automatically disabled:
+Disabled buttons get reduced opacity and `cursor-not-allowed`. The `whileTap` animation is automatically suppressed.
 
 ```tsx
 <Button disabled color="primary" variant="filled">Disabled Filled</Button>
@@ -114,8 +106,6 @@ Disabled buttons get reduced opacity and `cursor-not-allowed`. Animation is auto
 
 ### Custom Color
 
-Add a new color by extending the theme:
-
 ```tsx
 import { ThemeProvider, theme, extendTheme, PartialReablocksTheme } from 'reablocks';
 
@@ -124,7 +114,9 @@ const customTheme: PartialReablocksTheme = {
     button: {
       colors: {
         gradient: {
-          filled: 'bg-linear-to-r from-blue-500 to-purple-500 text-white'
+          filled: 'bg-linear-to-r from-blue-500 to-purple-500 text-white',
+          outline: 'border border-blue-500 text-blue-500',
+          text: 'text-blue-500'
         }
       }
     }
@@ -137,8 +129,6 @@ const customTheme: PartialReablocksTheme = {
 ```
 
 ### Custom Variant
-
-Add a new variant:
 
 ```tsx
 const customTheme: PartialReablocksTheme = {
@@ -161,13 +151,10 @@ const customTheme: PartialReablocksTheme = {
 
 <ThemeProvider theme={extendTheme(theme, customTheme)}>
   <Button variant="gradient" color="primary">Gradient Primary</Button>
-  <Button variant="gradient" color="secondary">Gradient Secondary</Button>
 </ThemeProvider>
 ```
 
 ### Custom Size
-
-Add custom sizes:
 
 ```tsx
 const customTheme: PartialReablocksTheme = {
@@ -180,27 +167,12 @@ const customTheme: PartialReablocksTheme = {
     }
   }
 };
-
-<ThemeProvider theme={extendTheme(theme, customTheme)}>
-  <Button size="xsmall">Extra Small</Button>
-  <Button size="xlarge">Extra Large</Button>
-</ThemeProvider>
 ```
 
 ### Merging Classes
 
-To append Tailwind classes to existing theme values instead of replacing them, use `mergeThemeClasses`:
-
 ```tsx
 import { extendTheme, mergeThemeClasses, theme } from 'reablocks';
-
-const customTheme: PartialReablocksTheme = {
-  components: {
-    button: {
-      base: 'transition-colors'  // appended to existing base classes
-    }
-  }
-};
 
 <ThemeProvider theme={extendTheme(theme, customTheme, mergeThemeClasses)}>
   ...
@@ -209,44 +181,50 @@ const customTheme: PartialReablocksTheme = {
 
 ## ButtonTheme Interface
 
-The complete theme structure for Button:
-
 ```typescript
 interface ButtonTheme {
-  base: string;           // Base classes for all buttons
-  disabled: string;       // Disabled state classes
-  fullWidth: string;      // Full-width classes
-  group: string;          // Classes when inside ButtonGroup
-  groupText: string;      // Classes when inside ButtonGroup with text variant
-  variants: {             // Per-variant base classes
+  base: string;            // Base classes for all buttons
+  disabled: string;        // Disabled state (uses data-variant attr selectors)
+  fullWidth: string;       // Full-width classes
+  group: string;           // Classes when inside ButtonGroup
+  groupText: string;       // Classes when inside ButtonGroup with variant="text"
+  variants: {              // Per-variant base classes
     filled: string;
     outline: string;
     text: string;
-    ghost: string;
-    [key: string]: string;  // extensible
+    [key: string]: string; // extensible
   };
-  colors: {               // Per-color, per-variant classes
-    primary: { filled, outline, text, ghost };
-    secondary: { filled, outline, text, ghost };
-    destructive: { filled, outline, text, ghost };
-    [key: string]: { [variant: string]: string };  // extensible
+  colors: {                // Per-color, per-variant classes
+    default:   { filled, outline, text, [key: string]: string };
+    primary:   { filled, outline, text, [key: string]: string };
+    secondary: { filled, outline, text, [key: string]: string };
+    success:   { filled, outline, text, [key: string]: string };
+    warning:   { filled, outline, text, [key: string]: string };
+    error:     { filled, outline, text, [key: string]: string };
+    [key: string]: { filled, outline, text, [key: string]: string };
   };
-  sizes: {                // Per-size classes
+  sizes: {                 // Per-size classes
     small: string;
     medium: string;
     large: string;
-    [key: string]: string;  // extensible
+    [key: string]: string;
   };
-  iconSizes: {            // Icon-only button sizes
+  iconSizes: {             // Padding presets for icon-only buttons
     small: string;
     medium: string;
     large: string;
+    [key: string]: string;
   };
-  adornment: {            // Icon adornment configuration
+  adornment: {             // Icon adornment configuration
     base: string;
-    start: { small, medium, large };  // start icon spacing per size
-    end: { small, medium, large };    // end icon spacing per size
-    sizes: { small, medium, large };  // icon dimensions per size
+    start: string;         // Start spacing
+    end: string;           // End spacing
+    sizes: {               // Icon dimensions per size
+      small: string;
+      medium: string;
+      large: string;
+      [key: string]: string;
+    };
   };
 }
 ```
@@ -261,10 +239,12 @@ Groups multiple buttons together with shared variant and size. Buttons inside a 
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'filled' \| 'outline' \| 'text' \| 'ghost'` | `'filled'` | Shared variant for all child buttons |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | Shared size for all child buttons |
+| `variant` | `'filled' \| 'outline' \| 'text' \| string` | `'filled'` | Shared variant for all child buttons |
+| `size` | `'small' \| 'medium' \| 'large' \| string` | `'medium'` | Shared size for all child buttons |
 | `children` | `ReactNode` | — | Button elements to group |
 | `className` | `string` | — | Additional CSS classes for the group wrapper |
+
+`variant` and `size` are typed as `string` so any custom variant/size registered in the button theme works inside a group.
 
 ## ButtonGroup Usage
 
@@ -306,4 +286,4 @@ Groups multiple buttons together with shared variant and size. Buttons inside a 
 </ButtonGroup>
 ```
 
-**Note:** When a Button is inside a ButtonGroup, the group's `variant` and `size` override the individual button's props. The ButtonGroup uses React Context (`ButtonGroupContext`) to propagate these values.
+**Note:** When a Button is inside a ButtonGroup, the group's `variant` and `size` override the individual button's props. The ButtonGroup uses React Context (`ButtonGroupContext`, exported `ButtonGroupContextProps`) to propagate these values.

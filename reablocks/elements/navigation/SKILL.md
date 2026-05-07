@@ -1,11 +1,11 @@
 # Navigation
 
-Navigation system with two components: **NavigationBar** (container) and **NavigationButton** (items). Supports vertical/horizontal layout, collapsible sidebar, animated active indicators, and start/end slots.
+Navigation system with two components: **NavigationBar** (container) and **NavigationButton** (items). Supports vertical/horizontal layout, animated active indicators, and `start`/`end` slot props for non-button content.
 
 ## Import
 
 ```tsx
-import { NavigationBar, NavigationBarStart, NavigationBarEnd, NavigationButton } from 'reablocks';
+import { NavigationBar, NavigationButton } from 'reablocks';
 ```
 
 ## NavigationBar Props
@@ -13,55 +13,43 @@ import { NavigationBar, NavigationBarStart, NavigationBarEnd, NavigationButton }
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout direction |
-| `collapsed` | `boolean` | — | Collapse the sidebar (vertical only) |
-| `animation` | `NavigationBarAnimation` | — | Custom Framer Motion animation config |
+| `start` | `ReactNode` | — | Content rendered in the start slot (top for vertical, left for horizontal) |
+| `end` | `ReactNode` | — | Content rendered in the end slot (bottom for vertical, right for horizontal) |
+| `children` | `ReactNode` | — | `NavigationButton` items rendered in the main navigation area |
+| `className` | `string` | — | Class names for the outer `<nav>` element |
+| `classNameStart` | `string` | — | Class names for the start slot wrapper |
+| `classNameNavigation` | `string` | — | Class names for the main navigation area |
+| `classNameEnd` | `string` | — | Class names for the end slot wrapper |
 | `theme` | `NavigationTheme` | — | Per-instance theme override |
-| `className` | `string` | — | Additional CSS classes |
-| `children` | `ReactNode` | — | NavigationButton elements and slots |
 
-### Slot Components
-
-- **`NavigationBarStart`** — Content at the top (vertical) or left (horizontal)
-- **`NavigationBarEnd`** — Content at the bottom (vertical) or right (horizontal)
-
-```tsx
-<NavigationBar>
-  <NavigationBarStart>
-    <Logo />
-  </NavigationBarStart>
-
-  <NavigationButton active>Home</NavigationButton>
-  <NavigationButton>Settings</NavigationButton>
-
-  <NavigationBarEnd>
-    <UserMenu />
-  </NavigationBarEnd>
-</NavigationBar>
-```
+The outer element is a `<nav>` with `role="navigation"`.
 
 ## NavigationButton Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `variant` | `'ghost' \| 'underline'` | `'ghost'` | Button style variant |
-| `active` | `boolean` | — | Active state (shows selection indicator) |
-| `animated` | `boolean` | `true` | Enable animations |
-| `theme` | `NavigationTheme` | — | Per-instance theme override |
+| `active` | `boolean` | — | Active state — animates a layout-id selection indicator |
+| `animated` | `boolean` | `true` | Disable Framer Motion layout animation when `false` |
+| `animationLayoutId` | `string` | `'selected-nav-button'` | Custom `layoutId` to scope the active indicator (use a unique id when multiple navs are mounted) |
 | `disabled` | `boolean` | — | Disabled state |
-
-Also accepts Framer Motion button props (`onClick`, `className`, etc.).
+| `onClick` | `() => void` | — | Click handler |
+| `className` | `string` | — | Additional CSS classes for the inner button |
+| `theme` | `NavigationTheme` | — | Per-instance theme override |
+| `children` | `ReactNode` | — | Button content (icon + label) |
 
 ## Vertical Navigation (Default)
 
 ```tsx
-<NavigationBar direction="vertical">
-  <NavigationBarStart>
-    <Logo />
-  </NavigationBarStart>
-  <NavigationButton active>
+<NavigationBar
+  direction="vertical"
+  start={<Logo />}
+  end={<UserMenu />}
+>
+  <NavigationButton active onClick={() => navigate('/')}>
     <HomeIcon /> Home
   </NavigationButton>
-  <NavigationButton>
+  <NavigationButton onClick={() => navigate('/settings')}>
     <SettingsIcon /> Settings
   </NavigationButton>
 </NavigationBar>
@@ -77,65 +65,51 @@ Also accepts Framer Motion button props (`onClick`, `className`, etc.).
 </NavigationBar>
 ```
 
-## Collapsible Sidebar
+## Scoping the active indicator
+
+When multiple `NavigationBar`s are on the same page, set `animationLayoutId` so the active highlight does not animate across instances:
 
 ```tsx
-const [collapsed, setCollapsed] = useState(false);
-
-<NavigationBar collapsed={collapsed}>
-  <NavigationBarStart>
-    <button onClick={() => setCollapsed(!collapsed)}>
-      <MenuIcon />
-    </button>
-  </NavigationBarStart>
-  <NavigationButton active>
-    <HomeIcon />
-    {!collapsed && <span>Home</span>}
-  </NavigationButton>
-  <NavigationButton>
-    <SettingsIcon />
-    {!collapsed && <span>Settings</span>}
-  </NavigationButton>
+<NavigationBar>
+  <NavigationButton active animationLayoutId="primary-nav">Home</NavigationButton>
+  <NavigationButton animationLayoutId="primary-nav">Docs</NavigationButton>
 </NavigationBar>
 ```
 
-Default animation: spring with stiffness 300, damping 30. Collapsed width: 85px, expanded: 320px.
-
 ## Button Variants
 
-- **ghost** — Background highlight on hover/active, rounded selection indicator
+- **ghost** — Background highlight on hover/active, rounded selection indicator behind the content
 - **underline** — Bottom border indicator on active, no background
+
+Variants are extensible — add new keys via theme customization, then pass `variant="myVariant"`.
 
 ## NavigationTheme Interface
 
 ```typescript
+interface NavigationButtonVariantConfigTheme {
+  content: string;     // Button content styling
+  active: string;      // Active state classes
+  selection: string;   // Selection indicator (animated layoutId target)
+  disabled: string;    // Disabled state classes
+}
+
 interface NavigationTheme {
   bar: {
-    base: string;              // Container (flex, padding, border, bg)
-    direction: {
-      horizontal: string;
-      vertical: string;
-    };
-    start: string;             // Start slot styles
-    navigation: string;        // Main nav area (flex-1, gap, overflow)
-    end: string;               // End slot styles
+    base: string;                                   // Outer nav (flex, padding, border, bg)
+    direction: { horizontal: string; vertical: string };
+    start: string;                                  // Start slot wrapper
+    navigation: string;                             // Main nav area (flex-1, gap)
+    end: string;                                    // End slot wrapper
   };
   button: {
-    base: string;              // Button base (relative, shrink-0)
+    base: string;                                   // Wrapper around the motion button
     variant: {
-      ghost: {
-        content: string;       // Button content styling
-        active: string;        // Active state
-        selection: string;     // Selection indicator
-        disabled: string;      // Disabled state
-      };
-      underline: {
-        content: string;
-        active: string;
-        selection: string;
-        disabled: string;
-      };
+      ghost: NavigationButtonVariantConfigTheme;
+      underline: NavigationButtonVariantConfigTheme;
+      [key: string]: NavigationButtonVariantConfigTheme;
     };
   };
 }
 ```
+
+The `variant` map is open — extend it through `extendTheme` to register custom variants.
