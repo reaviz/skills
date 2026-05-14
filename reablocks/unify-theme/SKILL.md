@@ -1,11 +1,17 @@
 ---
 name: unify-theme
-description: Use when the user asks to set up, install, or migrate to the Unify Theme for reablocks — a production-ready theme pack built on a three-level design-token system (primitives → semantic → Tailwind utilities) synced with the Unify Figma library. Covers the UnifyTheme.zip bundle, Reablocks Figma Plugin export, file layout (root.css / dark.css / light.css / tw.css / common.css), per-component detail tokens (e.g. `--buttons-details-height-core-icon-lg`), re-branding via primitive scale, customization without TypeScript changes, and Tailwind v4+ wiring.
+description: Use when the user asks to set up, install, or migrate to the Unify Theme for reablocks — a production-ready theme pack built on a three-level design-token system (primitives → semantic → Tailwind utilities) synced with the Unify Figma library. Covers the single-file `themeUnify.ts` TypeScript download, the Reablocks Figma Plugin export for CSS layers, file layout (root.css / dark.css / light.css / tw.css / common.css), per-component detail tokens (e.g. `--buttons-details-height-core-icon-lg`), re-branding via primitive scale, customization without TypeScript changes, and Tailwind v4+ wiring.
 ---
 
 # Unify Theme
 
 The **Unify Theme** is a complete, production-ready theme pack for reablocks built on a **three-level design-token system** that exposes tokens at every level and for every component — not just `primary` / `secondary` / `accent`, but per-component detail tokens like `--buttons-details-height-core-icon-lg`, `--inputs-details-corner-radius-primary`, and `--tabs-details-stroke-width-underline-lg`.
+
+This means you can re-skin Unify at any granularity:
+
+- Change the brand color → every component updates.
+- Change the semantic `--background-brand-base` → every brand surface updates.
+- Change just `--buttons-details-corner-radius-base` → only button radii change.
 
 ## When to use Unify
 
@@ -14,7 +20,7 @@ Use Unify when **any** of these apply:
 - The user mentions Figma, the Unify Figma library, or the Reablocks Figma Plugin.
 - The user wants design tokens synced end-to-end from Figma to production.
 - The user wants to re-skin reablocks at fine granularity (per-component dimensions, radii, padding) without writing Tailwind overrides or per-component TypeScript.
-- The user references `UnifyTheme.zip`, `root.css` / `dark.css` / `light.css` / `tw.css`, or per-component detail tokens like `--buttons-details-*`, `--inputs-details-*`, `--tabs-details-*`.
+- The user references `themeUnify.ts`, `root.css` / `dark.css` / `light.css` / `tw.css`, or per-component detail tokens like `--buttons-details-*`, `--inputs-details-*`, `--tabs-details-*`.
 - The user is on Tailwind v4+ and wants a complete token system rather than ad-hoc class overrides.
 
 Do **not** use Unify when:
@@ -60,27 +66,31 @@ Unify is structured as three layers that cascade. A change in Figma travels down
 
 The **per-component detail tier** in Level 1 is what makes Unify uniquely customizable — you can tune individual component dimensions (button heights, input padding, tab underline thickness) without writing Tailwind overrides, because each component theme already references those variables through arbitrary-value classes like `h-(--buttons-details-height-core-icon-lg)`.
 
-## Two install paths
+## Exporting tokens from Figma
 
-### Path A — Pre-built bundle (no Figma access)
+The official [**Reablocks Figma Plugin**](https://www.figma.com/community/plugin/1285928654186754176/reablocks-figma-plugin) keeps designs and code in sync without hand-copying tokens.
 
-Download the full theme bundle (5 CSS files + 46 TypeScript component themes) and drop it straight into the project:
-
-📦 **[Download UnifyTheme.zip](/assets/UnifyTheme.zip)**
-
-Unzip into:
-- CSS files → `src/assets/styles/`
-- Theme module → `src/shared/utils/Theme/`
-
-Then jump to [Wire it up at the app root](#wire-it-up-at-the-app-root).
-
-### Path B — Figma plugin (designer ↔ engineer sync)
-
-Use the official [Reablocks Figma Plugin](https://www.figma.com/community/plugin/1285928654186754176/reablocks-figma-plugin) so designs and code stay in sync without hand-copying tokens.
+### Running the plugin
 
 1. Open the Figma design file.
 2. Run **Plugins → Reablocks Figma Plugin → Select Mode Variant (Light/Dark) → Generate**.
 3. Drop the generated tokens into the styles directory (`root.css`, `dark.css`, `light.css`, `tw.css`).
+
+### Download the pre-built TypeScript theme
+
+For the TypeScript half of Unify, grab the single-file bundle — every component theme plus the composed `ReablocksTheme` in one file:
+
+📄 **[Download themeUnify.ts](/assets/themeUnify.ts)**
+
+Drop it anywhere in `src/` (e.g. `src/themeUnify.ts` or `src/shared/utils/Theme/themeUnify.ts`) and import the composed `theme`:
+
+```tsx
+import { theme } from './themeUnify';
+```
+
+Then jump to [Wire it up at the app root](#wire-it-up-at-the-app-root). The CSS token layers (`root.css` / `dark.css` / `light.css` / `tw.css`) still come from the Figma plugin export — `themeUnify.ts` references those CSS variables and Tailwind utilities and expects them to be present in the stylesheet.
+
+> Prefer per-component files for easier diffing and overrides? `themeUnify.ts` also exports each component theme individually (`buttonTheme`, `inputTheme`, …), so you can split it back into the [Optional: split per component](#optional-split-per-component) layout below by hand, or use it as-is.
 
 ## Prerequisites
 
@@ -93,7 +103,11 @@ Unify is built for **Tailwind CSS v4+** and **reablocks v10+** with React 18+.
 
 ## File layout
 
-The theme is split into two parts: **CSS token files** and a **TypeScript component-theme module**:
+The theme is split into two parts: **CSS token files** (generated by the Figma plugin) and a **TypeScript component-theme module** (the downloadable `themeUnify.ts`).
+
+### Recommended: single-file TypeScript theme
+
+The simplest layout — one TS file alongside the CSS layers from the plugin:
 
 ```
 src/
@@ -105,6 +119,16 @@ src/
 │     ├─ dark.css         # Layer 2 — semantic tokens (default / dark mode)
 │     ├─ light.css        # Layer 2 — semantic tokens overridden for light mode
 │     └─ tw.css           # Layer 3 — Tailwind @theme registration
+└─ themeUnify.ts          # every component theme + composed ReablocksTheme
+```
+
+### Optional: split per component
+
+If you'd rather maintain each component theme in its own file (easier to diff and review individual changes), split `themeUnify.ts` along its `// region` markers:
+
+```
+src/
+├─ assets/styles/         # same as above
 └─ shared/
    └─ utils/
       └─ Theme/
@@ -114,10 +138,10 @@ src/
             ├─ ButtonTheme.ts
             ├─ InputTheme.ts
             ├─ SelectTheme.ts
-            └─ … (46 total)
+            └─ …
 ```
 
-The structure can be flattened — the only hard requirement is the CSS import order.
+Both layouts are functionally identical. The only hard requirement is the CSS import order, before the app renders.
 
 ## Step 1 — Install the CSS token layers
 
@@ -161,7 +185,7 @@ body,
 
 ### `root.css` — Layer 1: primitives + per-component detail
 
-The **raw palette plus per-component detail tokens**. Regenerate this file on every design-system bump:
+The **raw palette plus per-component detail tokens**. This is the file you regenerate from Figma on every design-system bump:
 
 - **Color scales** — every hue has a 50–1000 scale plus an alpha (`-a-`) variant.
 - **Spacing** — `--spacing-padding-{4xs..8xl}` and `--spacing-space-between-{3xs..4xl}`.
@@ -180,14 +204,14 @@ The **raw palette plus per-component detail tokens**. Regenerate this file on ev
   /* Spacing */
   --spacing-padding-base: 16px;
 
-  /* Radius */
+  /* Corner radius */
   --corner-radius-primary: 6px;
 
   /* Per-component detail — the Unify differentiator */
   --buttons-details-height-core-icon-lg:    var(--sizing-size-tokens-base);
   --inputs-details-corner-radius-primary:   var(--corner-radius-primary);
   --tabs-details-stroke-width-underline-lg: 2px;
-  /* …~150 more per-component detail tokens */
+  /* …more per-component detail tokens */
 }
 ```
 
@@ -201,7 +225,7 @@ Maps role-named aliases onto primitives:
 | `content-text-*` | `content-text-neutral-base`, `content-text-brand-1`, `content-text-semantic-warning-2` | Text colors |
 | `content-assets-*` | `content-assets-brand-base`, `content-assets-semantic-error-1` | Icon / asset fills |
 | `stroke-*` | `stroke-neutral-3`, `stroke-brand-base`, `stroke-focused-highlight` | Borders / outlines |
-| `effects-*` | `effects-shadows-base`, `effects-focused-base` | Shadows and focus rings |
+| `effects-*` | `effects-shadows-base-md`, `effects-focused-base` | Shadows and focus rings |
 | `gradient-*` | `gradient-brand-50`, `gradient-neutral-700` | Multi-stop gradient stops |
 
 ```css
@@ -280,11 +304,11 @@ This is the bridge: it tells Tailwind v4 to expose every CSS variable as a utili
   --color-background-brand-base:    var(--background-brand-base);
   --color-content-text-neutral-1:   var(--content-text-neutral-1);
   --color-stroke-semantic-error-3:  var(--stroke-semantic-error-3);
-  /* …all ~2500 tokens follow the same pattern */
+  /* …all tokens follow the same pattern */
 }
 ```
 
-The full file (~2500 lines) is generated alongside `root.css` by the Figma plugin and produces utilities like:
+The full file is generated alongside `root.css` by the Figma plugin and produces utilities like:
 
 - `bg-background-brand-base` / `bg-background-neutral-raised-2`
 - `text-content-text-neutral-1` / `text-content-text-semantic-error-base`
@@ -307,10 +331,10 @@ export default {
 
 The TypeScript half maps reablocks's `ReablocksTheme` slots onto Tailwind utilities that reference the CSS tokens. Each component theme references both Tailwind utilities (semantic colors) **and** the per-component detail variables (dimensions, radii, gaps), so component dimensions are tunable from CSS alone.
 
-For example, `ButtonTheme.ts` references the detail tier directly:
+For example, the button theme references the detail tier directly:
 
 ```ts
-// excerpt from ButtonTheme.ts
+// excerpt from themeUnify.ts (or ButtonTheme.ts in the split layout)
 sizes: {
   small:  'h-(--buttons-details-height-core-icon-sm) text-xs px-(--buttons-details-horizontal-padding-sm)',
   medium: 'h-(--buttons-details-height-core-icon-md) text-sm px-(--buttons-details-horizontal-padding-md)',
@@ -320,33 +344,56 @@ sizes: {
 
 Change `--buttons-details-height-core-icon-md` in `root.css` and every medium button across the app re-flows — no component override, no Tailwind class change.
 
-### `shared/utils/Theme/theme.ts` — root composition
+### Single-file shape (`themeUnify.ts`)
 
 ```ts
 import { type ReablocksTheme } from 'reablocks';
 
-import { arrowTheme }   from './components/ArrowTheme';
-import { avatarTheme }  from './components/AvatarTheme';
-import { buttonTheme }  from './components/ButtonTheme';
-import { inputTheme }   from './components/InputTheme';
-import { selectTheme }  from './components/SelectTheme';
-import { tabsTheme }    from './components/TabsTheme';
-// …42 more imports
+// region: ArrowTheme
+export const arrowTheme = { /* … */ };
+// region: ButtonTheme
+export const buttonTheme = { /* … */ };
+// region: InputTheme
+export const inputTheme = { /* … */ };
+// …more component themes
 
 export const theme: ReablocksTheme = {
   components: {
-    avatar:  avatarTheme,
-    arrow:   arrowTheme,
-    button:  buttonTheme,
-    input:   inputTheme,
-    select:  selectTheme,
-    tabs:    tabsTheme,
-    // …42 more slots
+    arrow:  arrowTheme,
+    button: buttonTheme,
+    input:  inputTheme,
+    // …more slots
   }
 };
 ```
 
-### Components included (46 total)
+### Split-layout root composition (`shared/utils/Theme/theme.ts`)
+
+```ts
+import { type ReablocksTheme } from 'reablocks';
+
+import { arrowTheme }  from './components/ArrowTheme';
+import { avatarTheme } from './components/AvatarTheme';
+import { buttonTheme } from './components/ButtonTheme';
+import { inputTheme }  from './components/InputTheme';
+import { selectTheme } from './components/SelectTheme';
+import { tabsTheme }   from './components/TabsTheme';
+// …more imports
+
+export const theme: ReablocksTheme = {
+  components: {
+    avatar: avatarTheme,
+    arrow:  arrowTheme,
+    button: buttonTheme,
+    input:  inputTheme,
+    select: selectTheme,
+    tabs:   tabsTheme,
+    // …more slots
+  }
+};
+```
+
+### Components included
 
 | Category | Components |
 | --- | --- |
@@ -363,9 +410,9 @@ export const theme: ReablocksTheme = {
 ```tsx
 // src/index.tsx
 import { ThemeProvider } from 'reablocks';
-import { theme } from 'shared/utils/Theme';
+import { theme } from './themeUnify';            // or 'shared/utils/Theme' for the split layout
 
-import './assets/styles/index.css'; // pulls in all five CSS layers
+import './assets/styles/index.css';              // pulls in all CSS layers
 
 <ThemeProvider theme={theme}>
   <App />
@@ -382,8 +429,8 @@ Open `root.css` and replace the `--color-blue-hyperstream-*` scale with the new 
 
 ```css
 /* root.css */
---color-blue-hyperstream-500:  #ff6b35;
---color-blue-hyperstream-600:  #e55a2b;
+--color-blue-hyperstream-500:    #ff6b35;
+--color-blue-hyperstream-600:    #e55a2b;
 --color-blue-hyperstream-a-1000: #ff6b35;
 ```
 
@@ -467,4 +514,5 @@ Verify the override is declared **after** `root.css` in the CSS import chain. If
 ## Reference
 
 - Token export: [Reablocks Figma Plugin](https://www.figma.com/community/plugin/1285928654186754176/reablocks-figma-plugin)
+- TypeScript theme download: `themeUnify.ts` (single-file, all component themes + composed `ReablocksTheme`)
 - Main reablocks skill (default theme, `extendTheme`, hooks): [../SKILL.md](../SKILL.md)

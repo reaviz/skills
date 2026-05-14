@@ -67,7 +67,7 @@ skills/
 ├── reablocks/
 │   ├── SKILL.md                        # Library overview, theming, common rules
 │   ├── unify-theme/
-│   │   └── SKILL.md                    # Unify Theme — production / Figma-synced theme pack (3-tier tokens, 46 component themes)
+│   │   └── SKILL.md                    # Unify Theme — production / Figma-synced theme pack (3-tier tokens, single-file themeUnify.ts + Figma-generated CSS layers)
 │   ├── data/
 │   │   ├── SKILL.md                    # Data category overview
 │   │   ├── data-size/SKILL.md          # DataSize + formatSize
@@ -176,7 +176,7 @@ React UI component library with 50+ components built on Tailwind CSS and Framer 
 | **Layout** | Breadcrumbs, Card, Collapse, Divider, Field, List, Motion, Stepper, Tabs, Tree |
 | **Layers** | Backdrop, Callout, ConfirmDialog, ContextMenu, Dialog, Drawer, Menu, Notification, Popover, Tooltip |
 | **Typography** | H1-H6, P, BlockQuote, Lead, Large, Small, Muted |
-| **Theming** | Default `theme`, `themeUnify` (quick-start), **Unify Theme** (production / Figma-synced bundle with 3-tier tokens) |
+| **Theming** | Default `theme`, `themeUnify` (quick-start), **Unify Theme** (production / Figma-synced — single-file `themeUnify.ts` + Figma-generated CSS layers, 3-tier tokens) |
 
 ### Reachat (`reachat/`)
 
