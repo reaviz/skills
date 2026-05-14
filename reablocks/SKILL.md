@@ -37,19 +37,45 @@ function App() {
 
 ### Built-in Themes
 
-- **`theme`** — standard theme using Tailwind utility classes
-- **`themeUnify`** — design system theme using CSS custom properties (requires `import 'reablocks/unify.css'`)
+Reablocks ships **two theme options**:
+
+- **`theme`** — standard theme using Tailwind utility classes. The default. Use this unless the user asks for Unify.
+- **Unify Theme** — design-system theme built on a three-level token architecture (primitives → semantic → Tailwind), synced with the Unify Figma library. Available in two flavors:
+  - **Quick-start**: `themeUnify` export + `reablocks/unify.css` import (one-line setup, fixed tokens).
+  - **Production / Figma-synced**: full `UnifyTheme.zip` bundle (5 CSS files + 46 TypeScript component themes), or generated via the Reablocks Figma Plugin. This is what powers per-component detail tokens like `--buttons-details-height-core-icon-lg`.
 
 ```tsx
 // Default theme
 import { ThemeProvider, theme } from 'reablocks';
 <ThemeProvider theme={theme}>...</ThemeProvider>
 
-// Unify theme
+// Unify theme — quick-start
 import { ThemeProvider, themeUnify } from 'reablocks';
 import 'reablocks/unify.css';
 <ThemeProvider theme={themeUnify}>...</ThemeProvider>
 ```
+
+### When to use Unify instead of the default theme
+
+Switch to Unify when **any** of these apply:
+
+- The user mentions **Figma**, the **Unify Figma library**, or the **Reablocks Figma Plugin**.
+- The user wants tokens synced end-to-end from Figma to production.
+- The user wants to re-skin components at **fine granularity** (per-component dimensions, radii, padding) without writing Tailwind overrides or per-component TypeScript.
+- The user references `UnifyTheme.zip`, `root.css` / `dark.css` / `light.css` / `tw.css`, or per-component detail tokens like `--buttons-details-*`, `--inputs-details-*`, `--tabs-details-*`.
+
+**For the quick-start path** (single import, no Figma): use `themeUnify` as shown above. No further setup required.
+
+**For the production / Figma-synced path** (token bundle, customization via CSS, designer ↔ engineer sync): see the dedicated skill at [`unify-theme/SKILL.md`](./unify-theme/SKILL.md). It covers:
+- Prerequisites (Tailwind v4+, postcss plugins)
+- File layout (`root.css` / `dark.css` / `light.css` / `tw.css` / `common.css`)
+- Three-tier token architecture and how it cascades
+- Re-branding via the primitive color scale
+- Per-component tuning without TypeScript changes
+- Adding new semantic roles
+- Troubleshooting (purge issues, token override order, palette leaks)
+
+Do **not** offer Unify when the user only wants minor color/variant tweaks — `extendTheme(theme, …)` against the default theme is simpler. Do not offer Unify when the user is not on Tailwind v4+ or reablocks v10+.
 
 ## Theme Customization
 
