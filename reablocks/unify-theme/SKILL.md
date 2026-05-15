@@ -1,6 +1,6 @@
 ---
 name: unify-theme
-description: Use when the user asks to set up, install, or migrate to the Unify Theme for reablocks — a production-ready theme pack built on a three-level design-token system (primitives → semantic → Tailwind utilities) synced with the Unify Figma library. Covers the single-file `themeUnify.ts` TypeScript download, the Reablocks Figma Plugin export for CSS layers, file layout (root.css / dark.css / light.css / tw.css / common.css), per-component detail tokens (e.g. `--buttons-details-height-core-icon-lg`), re-branding via primitive scale, customization without TypeScript changes, and Tailwind v4+ wiring.
+description: Use when the user asks to set up, install, or migrate to the Unify Theme for reablocks — a production-ready theme pack built on a three-level design-token system (primitives → semantic → Tailwind utilities) synced with the Unify Figma library. Covers the single-file `themeUnify.ts` TypeScript download, the Reablocks Figma Plugin one-click **Export Styles** zip (index.css / common.css / root.css / light.css / dark.css / tw.css), file layout, per-component detail tokens (e.g. `--buttons-details-height-core-icon-lg`), re-branding via primitive scale, customization without TypeScript changes, and Tailwind v4+ wiring.
 ---
 
 # Unify Theme
@@ -72,9 +72,37 @@ The official [**Reablocks Figma Plugin**](https://www.figma.com/community/plugin
 
 ### Running the plugin
 
-1. Open the Figma design file.
-2. Run **Plugins → Reablocks Figma Plugin → Select Mode Variant (Light/Dark) → Generate**.
-3. Drop the generated tokens into the styles directory (`root.css`, `dark.css`, `light.css`, `tw.css`).
+1. Open the Figma design file in the Figma desktop app.
+2. Run **Plugins → Reablocks Figma Plugin** (or `CMD + P` / `Ctrl + P` → search "Reablocks").
+3. *(Optional)* If your file has multiple **Style** modes (e.g. compact vs. comfortable typography), pick one from the **Style** dropdown. The plugin only shows this dropdown when more than one Style mode exists.
+4. Pick the **Default theme** (`Dark` or `Light`). This decides which mode is emitted at `:root` without a wrapping selector — the other mode is wrapped in `.theme-*` / `[data-theme='*']` selectors so it can be toggled at runtime.
+5. Click **Export Styles**. The browser downloads `<figma-file-name>-styles.zip`.
+6. Unzip into your styles directory (e.g. `src/assets/styles/`). The archive already contains the full file set in the correct shape — no manual file picking or renaming required.
+
+#### What's in the zip
+
+| File | Purpose |
+| --- | --- |
+| `index.css` | Entry point — imports the other files in the correct order. Import this from your app. |
+| `common.css` | Base body styles, font smoothing, tooltip variables. |
+| `root.css` | **Level 1** — concrete color hexes and dimension pixel values (incl. per-component detail tokens). |
+| `light.css` | **Level 2** — semantic light-mode aliases. Un-wrapped at `:root` if Light is the default theme; otherwise wrapped in `.theme-light` / `[data-theme='light']`. |
+| `dark.css` | **Level 2** — semantic dark-mode aliases. Same default/wrapped behavior as `light.css`. |
+| `<mode>.css` | One file per extra Figma mode beyond Light/Dark (always wrapped in `.theme-<mode>` selectors). |
+| `tw.css` | **Level 3** — Tailwind v4 `@theme inline` config exposing every token as a utility class. |
+
+#### Switching themes at runtime
+
+The default theme (the one you picked in step 4) is already applied at `:root`. Toggle the *other* theme by setting a class or `data-theme` attribute on a wrapping element:
+
+```html
+<html class="theme-dark">  <!-- or class="theme-light" -->
+<html data-theme="dark">    <!-- equivalent -->
+```
+
+#### Inspecting individual sections (legacy flow)
+
+If you only need to pull a single section into an existing stylesheet, open the **Inspect variables** disclosure below the export button. Pick a Mode, click **Generate**, then **Copy** under any of the four sections (Root / Mode / Component / Other). The export-zip flow above is the recommended path for everything else.
 
 ### Download the pre-built TypeScript theme
 
@@ -96,7 +124,7 @@ Then jump to [Wire it up at the app root](#wire-it-up-at-the-app-root). The CSS 
 
 ```bash
 npm install reablocks
-npm install -D tailwindcss @tailwindcss/postcss postcss postcss-nested postcss-preset-env
+npm install -D tailwindcss @tailwindcss/postcss postcss
 ```
 
 Unify is built for **Tailwind CSS v4+** and **reablocks v10+** with React 18+.
@@ -145,6 +173,8 @@ Both layouts are functionally identical. The only hard requirement is the CSS im
 
 ## Step 1 — Install the CSS token layers
 
+> 💡 You normally **don't write these files by hand** — the Reablocks Figma Plugin's **Export Styles** button produces the complete set (`index.css`, `common.css`, `root.css`, `light.css`, `dark.css`, `tw.css`) as a zip. The snippets below are reference, useful if you want to know what each file contains or need to inspect an exported bundle.
+
 ### `index.css` — entry point
 
 ```css
@@ -155,7 +185,7 @@ Both layouts are functionally identical. The only hard requirement is the CSS im
 @import "./tw.css";
 ```
 
-**Import order matters.** `light.css` and `dark.css` must come before `root.css` is fully registered as Tailwind's source of truth, and `tw.css` must come **last** so it can reference all the variables.
+**Import order matters.** Import all token files (for example `light.css`, `dark.css`, and `root.css`) before `tw.css` so Tailwind can consume the full token set, and place any override file after the file it overrides. `tw.css` should come **last** because it references those variables and exposes them to Tailwind via `@theme inline`.
 
 ### `common.css` — global base styles
 
@@ -185,7 +215,7 @@ body,
 
 ### `root.css` — Layer 1: primitives + per-component detail
 
-The **raw palette plus per-component detail tokens**. This is the file you regenerate from Figma on every design-system bump:
+The **raw palette plus per-component detail tokens**. This is the file you regenerate from Figma on every design-system bump — re-run the plugin and replace the zip contents in your styles directory:
 
 - **Color scales** — every hue has a 50–1000 scale plus an alpha (`-a-`) variant.
 - **Spacing** — `--spacing-padding-{4xs..8xl}` and `--spacing-space-between-{3xs..4xl}`.
@@ -277,7 +307,7 @@ This is the bridge: it tells Tailwind v4 to expose every CSS variable as a utili
 
 1. `@import 'tailwindcss';` — pull Tailwind v4 in.
 2. `@source "node_modules/reablocks";` — keeps reablocks's compiled classes alive through Tailwind's purge.
-3. `@custom-variant dark/light/disabled-within` — registers variant selectors matching the class/attribute on the root element.
+3. `@custom-variant disabled-within` — registers the custom variant used by components when nested form controls are disabled.
 4. `@theme inline { … }` — maps every CSS variable to a `--color-*`, `--radius-*`, `--text-*`, `--font-*` token Tailwind recognizes.
 
 ```css
@@ -508,7 +538,7 @@ Verify the override is declared **after** `root.css` in the CSS import chain. If
 ## Recommended cadence
 
 - **Designers** keep Figma variables as the single source of truth.
-- **Engineers** re-run the plugin on design-system bumps and commit the regenerated CSS — component themes reference Tailwind utilities, so there is almost never any TypeScript to update.
+- **Engineers** re-run the plugin on design-system bumps (one click → **Export Styles** → unzip into the styles directory) and commit the regenerated CSS — component themes reference Tailwind utilities, so there is almost never any TypeScript to update.
 - **Don't hand-edit** the generated files; put bespoke tokens in a separate `overrides.css` imported after `root.css`.
 
 ## Reference
